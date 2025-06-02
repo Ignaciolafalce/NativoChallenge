@@ -6,4 +6,15 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Common\" />
+    <Folder Include="Configuration\" />
+    <Folder Include="Interfaces\" />
+    <Folder Include="Tasks\Commands\Handlers\" />
+    <Folder Include="Tasks\DTOs\" />
+    <Folder Include="Tasks\Helpers\" />
+    <Folder Include="Tasks\Queries\Handlers\" />
+    <Folder Include="Tasks\Validators\" />
+  </ItemGroup>
+
 </Project>
