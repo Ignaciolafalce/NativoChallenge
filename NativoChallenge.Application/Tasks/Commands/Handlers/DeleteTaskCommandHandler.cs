@@ -1,5 +1,6 @@
-﻿using NativoChallenge.Domain.Interfaces;
-using MediatR;
+﻿using MediatR;
+using NativoChallenge.Domain.Exceptions;
+using NativoChallenge.Domain.Interfaces;
 
 namespace NativoChallenge.Application.Tasks.Commands.Handlers;
 
@@ -14,6 +15,13 @@ public class DeleteTaskCommandHandler : IRequestHandler<DeleteTaskCommand>
 
     public async Task Handle(DeleteTaskCommand command, CancellationToken cancellationToken)
     {
+        var task = await _taskRepository.GetByIdAsync(command.TaskId, cancellationToken);
+
+        if (task is null)
+        {
+            throw new InvalidTaskException($"The task with the id '{command.TaskId}' does not exist.");
+        }
+
         await _taskRepository.DeleteAsync(command.TaskId, cancellationToken);
     }
 }
