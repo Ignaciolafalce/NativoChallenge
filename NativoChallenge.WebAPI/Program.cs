@@ -4,9 +4,9 @@ using NativoChallenge.Infrastructure.Data.Configuration;
 using NativoChallenge.Application.Configuration;
 using NativoChallenge.Infrastructure.Data.EF;
 using NativoChallenge.WebAPI.Endpoints;
+using NativoChallenge.WebAPI.Extensions;
 
 namespace NativoChallenge.WebAPI;
-
 public class Program
 {
     public static void Main(string[] args)
@@ -61,10 +61,13 @@ public class Program
 
         app.UseHttpsRedirection();
 
-        // Redirect root path to Swagger UI
-        app.MapGet("/", () => Results.Redirect("/swagger"));
+        app.UseCustomExceptionHandler(); // Custom exception handler middleware
 
-        app.UseAuthorization(); // not really necessary, but we can improve auth and auth later...
+        // Redirect root path to Swagger UI
+        app.MapGet("/", () => Results.Redirect("/swagger"))
+           .ExcludeFromDescription();
+
+        //app.UseAuthorization();  Not really necessary, but we can improve auth and auth later...
 
         app.MapTaskEndpoints();
 

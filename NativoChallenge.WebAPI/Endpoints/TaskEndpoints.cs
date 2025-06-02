@@ -1,7 +1,9 @@
-﻿using NativoChallenge.Application.Tasks.Commands;
-using NativoChallenge.Application.Tasks.Queries;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using NativoChallenge.Application.Tasks.Commands;
+using NativoChallenge.Application.Tasks.DTOs;
+using NativoChallenge.Application.Tasks.Queries;
+using NativoChallenge.WebAPI.Common;
 
 namespace NativoChallenge.WebAPI.Endpoints;
 
@@ -15,14 +17,14 @@ public static class TaskEndpoints
         group.MapGet("/", async (ISender sender, [AsParameters] ListTasksQuery query) =>
         {
             var result = await sender.Send(query);
-            return Results.Ok(result);
+            return Results.Ok(ApiResponse<ListTasksResult>.Success(result));
         });
 
         // POST /tasks
         group.MapPost("/", async (ISender sender, [FromBody] CreateTaskCommand command) =>
         {
             var result = await sender.Send(command);
-            return Results.Ok(result);
+            return Results.Ok(ApiResponse<CreateTaskResult>.Success(result));
         });
 
         // DELETE /tasks/{id}
