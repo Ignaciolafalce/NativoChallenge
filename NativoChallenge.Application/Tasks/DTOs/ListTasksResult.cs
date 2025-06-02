@@ -5,6 +5,7 @@ public class ListTasksResult
     public List<string> Warnings { get; set; } = new();
     public ListTasksResult(List<TaskDto> tasks, List<string> warnings)
     {
-        
+        Tasks = tasks ?? new List<TaskDto>();
+        Warnings = warnings ?? new List<string>();
     }
 }

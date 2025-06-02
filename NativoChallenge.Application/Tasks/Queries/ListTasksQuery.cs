@@ -3,4 +3,4 @@ using MediatR;
 
 namespace NativoChallenge.Application.Tasks.Queries;
 
-public record ListTasksQuery(string State, string OrderBy) : IRequest<ListTasksResult>;
+public record ListTasksQuery(string? State, string? OrderBy) : IRequest<ListTasksResult>;

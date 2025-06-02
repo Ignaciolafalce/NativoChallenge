@@ -5,11 +5,11 @@ using NativoChallenge.Application.Tasks.Helpers;
 
 namespace NativoChallenge.Application.Tasks.Queries.Handlers;
 
-public class ListTaskQueryHandler : IRequestHandler<ListTasksQuery, ListTasksResult>
+public class ListTasksQueryHandler : IRequestHandler<ListTasksQuery, ListTasksResult>
 {
     private readonly ITaskRepository _taskRepository;
 
-    public ListTaskQueryHandler(ITaskRepository taskRepository)
+    public ListTasksQueryHandler(ITaskRepository taskRepository)
     {
         _taskRepository = taskRepository;
     }
