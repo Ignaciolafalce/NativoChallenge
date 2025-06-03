@@ -5,6 +5,7 @@ using NativoChallenge.Infrastructure.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.Reflection;
 
 namespace NativoChallenge.Infrastructure.Data.Configuration
 {
@@ -12,11 +13,9 @@ namespace NativoChallenge.Infrastructure.Data.Configuration
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
-
             var useInMemoryDb = bool.Parse(configuration.GetSection("UseInMemoryDb").Value?.ToLower() ?? "false");
             services.AddDbContext<AppDbContext>(options =>
             {
-
                 if (useInMemoryDb)
                 {
                     options.UseInMemoryDatabase("ChallengeDb");
@@ -24,7 +23,14 @@ namespace NativoChallenge.Infrastructure.Data.Configuration
 
                 if (!useInMemoryDb)
                 {
-                    options.UseSqlServer(configuration.GetConnectionString("NativoConecctionString"));
+                    var appDbContextType = typeof(AppDbContext);
+                    var assembly = Assembly.GetAssembly(appDbContextType);
+                    if (assembly == null)
+                    {
+                        throw new InvalidOperationException($"Unable to retrieve assembly for type {appDbContextType.FullName}");
+                    }
+
+                    options.UseSqlServer(configuration.GetConnectionString("NativoConecctionString"), opt => opt.MigrationsAssembly(assembly.FullName));
                 }
             });
 
@@ -33,6 +39,5 @@ namespace NativoChallenge.Infrastructure.Data.Configuration
 
             return services;
         }
-
     }
 }
