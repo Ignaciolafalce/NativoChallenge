@@ -1,9 +1,12 @@
-// Important! -> Validate Port is OK!
-@NativoChallenge.WebAPI_HostAddress = https://localhost:44378
+// Importante verificar el puerto (estos son los que estaba utilizando yo)
+// iis
+//@NativoChallenge.WebAPI_HostAddress = https://localhost:44378
+//docker
+@NativoChallenge.WebAPI_HostAddress = https://localhost:49153
 
 ### Task Endpoints
 ###Example Task ID, replace with actual ID when needed
-@taskId = 57ec79a6-eef3-42eb-9a61-c31231891cea
+@taskId = ee749549-0e31-457f-afcd-4e2e13a0c153
 
 ### Get All Tasks
 GET {{NativoChallenge.WebAPI_HostAddress}}/tasks

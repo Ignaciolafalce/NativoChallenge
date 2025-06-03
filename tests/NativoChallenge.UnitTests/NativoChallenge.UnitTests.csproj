@@ -18,8 +18,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\NativoChallenge.Application\NativoChallenge.Application.csproj" />
-    <ProjectReference Include="..\NativoChallenge.Domain\NativoChallenge.Domain.csproj" />
+    <ProjectReference Include="..\..\src\NativoChallenge.Application\NativoChallenge.Application.csproj" />
+    <ProjectReference Include="..\..\src\NativoChallenge.Domain\NativoChallenge.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>
