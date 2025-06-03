@@ -28,6 +28,17 @@ public class Task
         Priority = priority;
     }
 
+    // Internal Ctor for testing purposes
+    internal Task(Guid id, string title, string? description, DateTime expirationDate, TaskPriority priority, string state = "Completed")
+    {
+        Id = id;
+        Title = title;
+        Description = description;
+        ExpirationDate = expirationDate;
+        Priority = priority;
+        State = Enum.Parse<TaskState>(state);
+    }
+
     public void Complete()
     {
         if (IsExpired)

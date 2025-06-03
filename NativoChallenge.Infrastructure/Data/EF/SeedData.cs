@@ -6,9 +6,9 @@ namespace NativoChallenge.Infrastructure.Data.EF;
 
 public static class SeedData
 {
-    public static async Task SeedAsync(AppDbContext dbContext   )
+    public static async Task SeedAsync(AppDbContext dbContext)
     {
-        if (await dbContext .Tasks.AnyAsync())
+        if (await dbContext.Tasks.AnyAsync())
         {
             return;
         }
@@ -20,7 +20,7 @@ public static class SeedData
             new("Hacer la VTV", "Llevar el auto al taller antes de viernes", DateTime.UtcNow.AddDays(3), TaskPriority.Low)
         };
 
-        dbContext   .Tasks.AddRange(sampleTasks);
-        await dbContext .SaveChangesAsync();
+        dbContext.Tasks.AddRange(sampleTasks);
+        await dbContext.SaveChangesAsync();
     }
 }

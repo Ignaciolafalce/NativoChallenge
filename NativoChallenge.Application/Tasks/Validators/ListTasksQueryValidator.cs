@@ -5,13 +5,13 @@ using NativoChallenge.Application.Tasks.Queries;
 
 namespace NativoChallenge.Application.Tasks.Validators;
 
-public class ListTaskQueryValidator : AbstractValidator<ListTasksQuery>
+public class ListTasksQueryValidator : AbstractValidator<ListTasksQuery>
 {
     private static readonly string[] _allowedStateFields = [nameof(TaskState.Pending), nameof(TaskState.Completed)];
 
     private static readonly string[] _allowedOrderFields = [nameof(Entities.Task.ExpirationDate), nameof(Entities.Task.Priority)];
 
-    public ListTaskQueryValidator()
+    public ListTasksQueryValidator()
     {
         RuleFor(query => query.State)
                 .Must(field => string.IsNullOrWhiteSpace(field) || _allowedStateFields.Contains(field))
