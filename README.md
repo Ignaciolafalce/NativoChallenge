@@ -255,6 +255,8 @@ Si quisiera hacer una solución más simple, hubiera creado:
 - Tests: unitarios a dominio/servicio y  de integracion a endpoints
 
 Pero opté por mostrar buenas prácticas aplicando CQRS, patrones y Clean Architecture, pensando en escalabilidad y mantenibilidad futura.
+Seguro si hubiese usado la laversion simplificada al tener tener mas tiempo hubiese implementado logger, options patterns, autenticación y autorización, y más tests.
+Espero que se entienda la idea :)
 
 ---
 ¡Gracias por leer! 🚀

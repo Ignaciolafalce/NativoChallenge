@@ -19,6 +19,7 @@ namespace NativoChallenge.Infrastructure.Data.Configuration
             var useInMemoryDb = bool.Parse(configuration.GetSection("UseInMemoryDb").Value?.ToLower() ?? "false");
             services.AddDbContext<AppDbContext>(options =>
             {
+                    Console.WriteLine("Database - Using in memory?: " + configuration.GetValue<bool>("UseInMemoryDb"));
                 if (useInMemoryDb)
                 {
                     options.UseInMemoryDatabase("ChallengeDb");
@@ -27,6 +28,7 @@ namespace NativoChallenge.Infrastructure.Data.Configuration
                 if (!useInMemoryDb)
                 {
                     options.UseSqlServer(configuration.GetConnectionString("NativoConnectionString"));
+                    Console.WriteLine("Database - ConnectionString: " + configuration.GetConnectionString("NativoConnectionString"));
                 }
             });
 
