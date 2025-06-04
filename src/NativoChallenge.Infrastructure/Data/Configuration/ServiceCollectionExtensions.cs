@@ -13,6 +13,9 @@ namespace NativoChallenge.Infrastructure.Data.Configuration
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddScoped<ITaskRepository, TaskRepository>();
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(IApplicationMarker).Assembly));
+
             var useInMemoryDb = bool.Parse(configuration.GetSection("UseInMemoryDb").Value?.ToLower() ?? "false");
             services.AddDbContext<AppDbContext>(options =>
             {
@@ -23,19 +26,10 @@ namespace NativoChallenge.Infrastructure.Data.Configuration
 
                 if (!useInMemoryDb)
                 {
-                    var appDbContextType = typeof(AppDbContext);
-                    var assembly = Assembly.GetAssembly(appDbContextType);
-                    if (assembly == null)
-                    {
-                        throw new InvalidOperationException($"Unable to retrieve assembly for type {appDbContextType.FullName}");
-                    }
-
-                    options.UseSqlServer(configuration.GetConnectionString("NativoConecctionString"), opt => opt.MigrationsAssembly(assembly.FullName));
+                    options.UseSqlServer(configuration.GetConnectionString("NativoConnectionString"));
                 }
             });
 
-            services.AddScoped<ITaskRepository, TaskRepository>();
-            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(IApplicationMarker).Assembly));
 
             return services;
         }
