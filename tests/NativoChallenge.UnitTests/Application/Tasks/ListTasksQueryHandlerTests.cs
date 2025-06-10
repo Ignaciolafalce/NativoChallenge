@@ -1,4 +1,6 @@
+using AutoMapper;
 using Moq;
+using NativoChallenge.Application.Tasks.Mapping;
 using NativoChallenge.Application.Tasks.Queries;
 using NativoChallenge.Application.Tasks.Queries.Handlers;
 using NativoChallenge.Domain.Enums;
@@ -9,9 +11,32 @@ using Entities = NativoChallenge.Domain.Entities;
 
 namespace NativoChallenge.UnitTests.Application.Tasks;
 
-public class ListTasksQueryHandlerTests
+public class ListTaskQueryHandlerTestFixture : IDisposable
 {
+    public IMapper Mapper { get; private set; }
+    public ListTaskQueryHandlerTestFixture()
+    {
+        Mapper = new MapperConfiguration(cfg =>
+        {
+            cfg.AddProfile<TaskDtoProfile>();
+
+        }).CreateMapper();
+    }
+
+
+    public void Dispose(){}
+}
+
+public class ListTasksQueryHandlerTests : IClassFixture<ListTaskQueryHandlerTestFixture>
+{
+
     readonly Mock<ITaskRepository> _mockRepo = new();
+    private readonly ListTaskQueryHandlerTestFixture _fixture;
+
+    public ListTasksQueryHandlerTests(ListTaskQueryHandlerTestFixture fixture)
+    {
+        _fixture = fixture;
+    }
 
     [Fact]
     public async Task Handle_ReturnsTasksList()
@@ -26,7 +51,7 @@ public class ListTasksQueryHandlerTests
                  .ReturnsAsync(tasks);
 
         var query = new ListTasksQuery(null, null);
-        var handler = new ListTasksQueryHandler(_mockRepo.Object);
+        var handler = new ListTasksQueryHandler(_mockRepo.Object, _fixture.Mapper);
 
         // Act
         var result = await handler.Handle(query, CancellationToken.None);
@@ -54,7 +79,7 @@ public class ListTasksQueryHandlerTests
                  .ReturnsAsync(tasks);
 
         var query = new ListTasksQuery(null, null);
-        var handler = new ListTasksQueryHandler(_mockRepo.Object);
+        var handler = new ListTasksQueryHandler(_mockRepo.Object, _fixture.Mapper);
 
         // Act
         var result = await handler.Handle(query, CancellationToken.None);
@@ -80,7 +105,7 @@ public class ListTasksQueryHandlerTests
                  .ReturnsAsync(tasks);
 
         var query = new ListTasksQuery(null, null);
-        var handler = new ListTasksQueryHandler(_mockRepo.Object);
+        var handler = new ListTasksQueryHandler(_mockRepo.Object, _fixture.Mapper);
 
         // Act
         var result = await handler.Handle(query, CancellationToken.None);
