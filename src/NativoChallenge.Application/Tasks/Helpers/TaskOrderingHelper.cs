@@ -3,15 +3,15 @@
 namespace NativoChallenge.Application.Tasks.Helpers;
 public static class TaskOrderingHelper
 {
-    private static readonly Dictionary<string, Func<IQueryable<Entities.Task>, IOrderedQueryable<Entities.Task>>> _orderBySelectors =
+    private static readonly Dictionary<string, Func<IQueryable<Entities.Task.Task>, IOrderedQueryable<Entities.Task.Task>>> _orderBySelectors =
         new(StringComparer.OrdinalIgnoreCase)
         {
-            { nameof(Entities.Task.ExpirationDate), query => query.OrderBy(task => task.ExpirationDate) },
+            { nameof(Entities.Task.Task.ExpirationDate), query => query.OrderBy(task => task.ExpirationDate) },
 
-            { nameof(Entities.Task.Priority), query => query.OrderBy(task => task.Priority) }
+            { nameof(Entities.Task.Task.Priority), query => query.OrderBy(task => task.Priority) }
         };
 
-    public static Func<IQueryable<Entities.Task>, IOrderedQueryable<Entities.Task>> GetOrderFunc(string? orderBy)
+    public static Func<IQueryable<Entities.Task.Task>, IOrderedQueryable<Entities.Task.Task>> GetOrderFunc(string? orderBy)
     {
         var key = orderBy ?? string.Empty;
 

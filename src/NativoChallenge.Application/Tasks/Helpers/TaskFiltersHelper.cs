@@ -6,7 +6,7 @@ namespace NativoChallenge.Application.Tasks.Helpers;
 
 public static class TaskFiltersHelper
 {
-    public static Expression<Func<Entities.Task, bool>> GetStateFilter(string? state)
+    public static Expression<Func<Entities.Task.Task, bool>> GetStateFilter(string? state)
     {
         if (string.IsNullOrWhiteSpace(state))
             return task => true;

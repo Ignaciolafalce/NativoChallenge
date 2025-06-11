@@ -5,10 +5,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using NativoChallenge.Application;
 using NativoChallenge.Application.Interfaces;
+using NativoChallenge.Domain;
 using NativoChallenge.Domain.Entities.Identity;
 using NativoChallenge.Domain.Interfaces;
 using NativoChallenge.Infrastructure.Data.EF;
 using NativoChallenge.Infrastructure.Data.Repositories;
+using NativoChallenge.Infrastructure.Email;
 using NativoChallenge.Infrastructure.Services;
 using System.Reflection;
 
@@ -19,6 +21,8 @@ namespace NativoChallenge.Infrastructure.Data.Configuration
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
 
+            // Email sender
+            services.AddScoped<IEmailSender, FakeEmailSender>();
             // Services 
             services.AddScoped<ICurrentUserService, CurrentUserService>();
 
@@ -26,6 +30,7 @@ namespace NativoChallenge.Infrastructure.Data.Configuration
             services.AddScoped<ITaskRepository, TaskRepository>();
 
             // MediatR
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(IDomainMarker).Assembly));
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(IApplicationMarker).Assembly));
 
             // Identity Core
@@ -37,7 +42,8 @@ namespace NativoChallenge.Infrastructure.Data.Configuration
             services.AddHttpContextAccessor()
                     .AddAuthorization()
                     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                    .AddJwtBearer(options => { 
+                    .AddJwtBearer(options =>
+                    {
 
                         options.TokenValidationParameters = new TokenValidationParameters()
                         {
@@ -56,7 +62,7 @@ namespace NativoChallenge.Infrastructure.Data.Configuration
             var useInMemoryDb = bool.Parse(configuration.GetSection("UseInMemoryDb").Value?.ToLower() ?? "false");
             services.AddDbContext<AppDbContext>(options =>
             {
-                    Console.WriteLine("Database - Using in memory?: " + configuration.GetValue<bool>("UseInMemoryDb"));
+                Console.WriteLine("Database - Using in memory?: " + configuration.GetValue<bool>("UseInMemoryDb"));
                 if (useInMemoryDb)
                 {
                     options.UseInMemoryDatabase("ChallengeDb");
@@ -69,6 +75,7 @@ namespace NativoChallenge.Infrastructure.Data.Configuration
                 }
             });
 
+            services.AddScoped<DbContextWithEvents>();
 
             return services;
         }

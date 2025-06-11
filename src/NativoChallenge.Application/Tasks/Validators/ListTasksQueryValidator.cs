@@ -9,7 +9,7 @@ public class ListTasksQueryValidator : AbstractValidator<ListTasksQuery>
 {
     private static readonly string[] _allowedStateFields = [nameof(TaskState.Pending), nameof(TaskState.Completed)];
 
-    private static readonly string[] _allowedOrderFields = [nameof(Entities.Task.ExpirationDate), nameof(Entities.Task.Priority)];
+    private static readonly string[] _allowedOrderFields = [nameof(Entities.Task.Task.ExpirationDate), nameof(Entities.Task.Task.Priority)];
 
     public ListTasksQueryValidator()
     {

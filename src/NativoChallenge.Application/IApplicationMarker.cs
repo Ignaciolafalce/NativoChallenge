@@ -1,3 +1,3 @@
 ﻿namespace NativoChallenge.Application;
 
-public  class IApplicationMarker{ }
+public  interface IApplicationMarker{ }

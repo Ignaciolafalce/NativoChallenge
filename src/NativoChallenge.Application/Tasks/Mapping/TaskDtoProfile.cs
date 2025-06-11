@@ -7,7 +7,7 @@ public class TaskDtoProfile : Profile
 {
     public TaskDtoProfile()
     {
-        CreateMap<Domain.Entities.Task, TaskDto>()
+        CreateMap<Domain.Entities.Task.Task, TaskDto>()
             .ForMember(dest => dest.Priority, opt => opt.MapFrom(src => src.Priority.ToString()))
             .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.State.ToString()));
     }

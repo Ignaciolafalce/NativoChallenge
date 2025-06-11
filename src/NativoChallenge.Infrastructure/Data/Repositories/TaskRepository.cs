@@ -6,9 +6,13 @@ using Entities = NativoChallenge.Domain.Entities;
 
 namespace NativoChallenge.Infrastructure.Data.Repositories;
 
-public class TaskRepository : GenericRepository<Entities.Task, Guid>, ITaskRepository
+public class TaskRepository : GenericRepository<Entities.Task.Task, Guid>, ITaskRepository
 {
-    public TaskRepository(AppDbContext context) : base(context) { }
+    private readonly DbContextWithEvents _contextWithEvents;
+
+    public TaskRepository(DbContextWithEvents contextWithEvents) : base(contextWithEvents.Context) { 
+        _contextWithEvents = contextWithEvents;
+    }
 
     public async Task<int> CountHighPriorityPendingAsync(CancellationToken cancellationToken)
     {
@@ -16,8 +20,11 @@ public class TaskRepository : GenericRepository<Entities.Task, Guid>, ITaskRepos
         return counter;
     }
 
-    public async Task<Entities.Task> CreateAsync(Entities.Task task, CancellationToken cancellationToken)
+    public async Task<Entities.Task.Task> CreateAsync(Entities.Task.Task task, CancellationToken cancellationToken)
     {
-        return await AddAsync(task, cancellationToken); // i'm just wrapping the generic method ;), fede?
+        await _contextWithEvents.Context.Set<Entities.Task.Task>().AddAsync(task);
+        await _contextWithEvents.SaveChangesAsync(cancellationToken);
+        return task;
+
     }
 }

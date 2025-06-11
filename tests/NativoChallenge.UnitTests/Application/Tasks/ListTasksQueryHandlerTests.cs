@@ -3,10 +3,12 @@ using Moq;
 using NativoChallenge.Application.Tasks.Mapping;
 using NativoChallenge.Application.Tasks.Queries;
 using NativoChallenge.Application.Tasks.Queries.Handlers;
+using NativoChallenge.Domain.Entities.Task;
 using NativoChallenge.Domain.Enums;
 using NativoChallenge.Domain.Interfaces;
 using System.Linq.Expressions;
-using Entities = NativoChallenge.Domain.Entities;
+using Entities = NativoChallenge.Domain.Entities.Task;
+using Threading = System.Threading.Tasks;
 
 
 namespace NativoChallenge.UnitTests.Application.Tasks;
@@ -39,7 +41,7 @@ public class ListTasksQueryHandlerTests : IClassFixture<ListTaskQueryHandlerTest
     }
 
     [Fact]
-    public async Task Handle_ReturnsTasksList()
+    public async Threading.Task Handle_ReturnsTasksList()
     {
         // Arrange
         var tasks = new List<Entities.Task> {
@@ -62,7 +64,7 @@ public class ListTasksQueryHandlerTests : IClassFixture<ListTaskQueryHandlerTest
     }
 
     [Fact]
-    public async Task Handle_ReturnsTasksList_Where_State_Pending()
+    public async Threading.Task Handle_ReturnsTasksList_Where_State_Pending()
     {
         // Arrange
         var tasks = new List<Entities.Task> {
@@ -91,7 +93,7 @@ public class ListTasksQueryHandlerTests : IClassFixture<ListTaskQueryHandlerTest
     }
 
     [Fact]
-    public async Task Handle_ReturnsTasksList_OderBy_ExpirationDate()
+    public async Threading.Task Handle_ReturnsTasksList_OderBy_ExpirationDate()
     {
         // Arrange
         var tasks = new List<Entities.Task> {

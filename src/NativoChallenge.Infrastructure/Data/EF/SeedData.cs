@@ -2,14 +2,15 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using NativoChallenge.Domain.Entities.Identity;
+using NativoChallenge.Domain.Entities.Task;
 using NativoChallenge.Domain.Enums;
-using Entities = NativoChallenge.Domain.Entities;
+using Entities = NativoChallenge.Domain.Entities.Task;
 
 namespace NativoChallenge.Infrastructure.Data.EF;
 
 public static class SeedData
 {
-    public static async Task SeedTasksAsync(AppDbContext dbContext)
+    public static async System.Threading.Tasks.Task SeedTasksAsync(AppDbContext dbContext)
     {
         if (await dbContext.Tasks.AnyAsync())
         {
@@ -27,7 +28,7 @@ public static class SeedData
         await dbContext.SaveChangesAsync();
     }
 
-    public static async Task SeedAdminUsersAsync(
+    public static async System.Threading.Tasks.Task SeedAdminUsersAsync(
         UserManager<ApplicationUser> userManager,
         RoleManager<ApplicationRole> roleManager)
     {

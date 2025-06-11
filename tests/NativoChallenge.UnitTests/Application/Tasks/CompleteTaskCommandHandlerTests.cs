@@ -2,10 +2,12 @@ using Moq;
 using NativoChallenge.Application.Tasks.Commands;
 using NativoChallenge.Application.Tasks.Commands.Handlers;
 using NativoChallenge.Application.Tasks.DTOs;
+using NativoChallenge.Domain.Entities.Task;
 using NativoChallenge.Domain.Enums;
 using NativoChallenge.Domain.Exceptions;
 using NativoChallenge.Domain.Interfaces;
-using Entities = NativoChallenge.Domain.Entities;
+using Entities = NativoChallenge.Domain.Entities.Task;
+using Threading = System.Threading.Tasks;
 
 namespace NativoChallenge.UnitTests.Application.Tasks;
 
@@ -14,13 +16,13 @@ public class CompleteTaskCommandHandlerTests
     readonly Mock<ITaskRepository> _mockRepo = new();
 
     [Fact]
-    public async Task Handle_CompletesTask()
+    public async Threading.Task Handle_CompletesTask()
     {
         // Arrange
         var task = new Entities.Task("Title", null, DateTime.UtcNow.AddDays(1), TaskPriority.Medium);
 
         _mockRepo.Setup(r => r.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(task);
-        _mockRepo.Setup(r => r.UpdateAsync(It.IsAny<Entities.Task>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
+        _mockRepo.Setup(r => r.UpdateAsync(It.IsAny<Entities.Task>(), It.IsAny<CancellationToken>())).Returns(Threading.Task.CompletedTask);
 
         var handler = new CompleteTaskCommandHandler(_mockRepo.Object);
         var command = new CompleteTaskCommand(task.Id);
@@ -37,7 +39,7 @@ public class CompleteTaskCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_Throw_InvalidTaskException()
+    public async Threading.Task Handle_Throw_InvalidTaskException()
     {
         try
         {

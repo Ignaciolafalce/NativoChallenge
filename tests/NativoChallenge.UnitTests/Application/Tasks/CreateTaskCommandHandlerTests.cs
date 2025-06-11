@@ -1,10 +1,11 @@
 using Moq;
-using Entities = NativoChallenge.Domain.Entities;
 using NativoChallenge.Domain.Interfaces;
 using NativoChallenge.Domain.Enums;
 using NativoChallenge.Application.Tasks.Commands;
 using NativoChallenge.Application.Tasks.Commands.Handlers;
 using NativoChallenge.Application.Tasks.DTOs;
+using Entities = NativoChallenge.Domain.Entities.Task;
+using Threading = System.Threading.Tasks;
 
 namespace NativoChallenge.UnitTests.Application.Tasks;
 

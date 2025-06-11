@@ -5,17 +5,38 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using NativoChallenge.Application.Auth.DTOs;
 using NativoChallenge.Domain.Entities.Identity;
+using NativoChallenge.Domain.Entities.Task;
 using NativoChallenge.Domain.Enums;
+using NativoChallenge.Domain.Interfaces;
 using NativoChallenge.Infrastructure.Data.EF;
+using NativoChallenge.Infrastructure.Email;
 using NativoChallenge.WebAPI;
 using NativoChallenge.WebAPI.Common;
 using NativoChallenge.WebAPI.Common.Auth;
 using Newtonsoft.Json.Linq;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
-using Entities = NativoChallenge.Domain.Entities;
+using Entities = NativoChallenge.Domain.Entities.Task;
+using Threading = System.Threading.Tasks;
 
 namespace NativoChallenge.IntegrationTests.Tasks;
+
+public class FlagEmailSender : IEmailSender
+{
+    public static bool WasCalled { get; private set; }
+
+    public static void Reset() => WasCalled = false;
+
+    public Threading.Task SendEmailAsync(
+        string to,
+        string subject,
+        string body,
+        CancellationToken cancellationToken = default)
+    {
+        WasCalled = true;
+        return Threading.Task.CompletedTask;
+    }
+}
 
 public class TaskEndpointsSetupFixture : WebApplicationFactory<Program>
 {
@@ -26,6 +47,7 @@ public class TaskEndpointsSetupFixture : WebApplicationFactory<Program>
     {
         builder.ConfigureServices(services =>
         {
+            services.AddSingleton<IEmailSender, FlagEmailSender>();
             // This implementetion could be improve probably with testing databae(sql? postgres?) for diferentes enviroments
             // Delete AppDbContext prev registered
             var descriptor = services.SingleOrDefault(
@@ -67,7 +89,7 @@ public class TaskEndpointsSetupFixture : WebApplicationFactory<Program>
     //    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", result!.Data!.AccessToken);
     //}
 
-    public async Task SeedUsersAsync(IServiceProvider services)
+    public async Threading.Task SeedUsersAsync(IServiceProvider services)
     {
         var scope = services.CreateScope();
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
@@ -92,13 +114,13 @@ public class TaskEndpointsSetupFixture : WebApplicationFactory<Program>
         }
     }
 
-    public async Task AuthenticateAdminAsync(HttpClient client)
+    public async Threading.Task AuthenticateAdminAsync(HttpClient client)
     {
         var loginRequest = new { userName = "admin", password = "Admin123!" };
 
         var response = await client.PostAsJsonAsync("/auth/token", loginRequest);
         var result = await response.Content.ReadFromJsonAsync<ApiResponse<TokenResult>>();
-       
+
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", result!.Data!.AccessToken);
     }
 

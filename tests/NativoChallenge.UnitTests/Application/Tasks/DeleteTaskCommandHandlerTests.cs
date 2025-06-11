@@ -1,13 +1,12 @@
 using Moq;
-using NativoChallenge.Application.Tasks.Commands;
 using NativoChallenge.Application.Tasks.Commands.Handlers;
 using NativoChallenge.Domain.Enums;
 using NativoChallenge.Domain.Exceptions;
 using NativoChallenge.Domain.Interfaces;
-using Entities = NativoChallenge.Domain.Entities;
+using NativoChallenge.Application.Tasks.Commands;
+using Entities = NativoChallenge.Domain.Entities.Task;
 
 namespace NativoChallenge.UnitTests.Application.Tasks;
-
 public class DeleteTaskCommandHandlerTests
 {
     readonly Mock<ITaskRepository> _mockRepo = new();
@@ -17,7 +16,7 @@ public class DeleteTaskCommandHandlerTests
     {
         // Arrange
         var task = new Entities.Task(Guid.NewGuid(), "Title", null, DateTime.UtcNow.AddDays(1), TaskPriority.Medium);
-        
+
         _mockRepo.Setup(r => r.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(task);
         _mockRepo.Setup(r => r.DeleteAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
 
@@ -39,7 +38,7 @@ public class DeleteTaskCommandHandlerTests
         {
             // Arrange
             Entities.Task task = null!;
-   
+
             _mockRepo.Setup(r => r.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(task);
             _mockRepo.Setup(r => r.DeleteAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
 

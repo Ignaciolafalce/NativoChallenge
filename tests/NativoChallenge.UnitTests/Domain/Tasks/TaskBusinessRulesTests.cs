@@ -1,6 +1,6 @@
 using System;
 using Xunit;
-using Entities = NativoChallenge.Domain.Entities;
+using Entities = NativoChallenge.Domain.Entities.Task;
 using NativoChallenge.Domain.Enums;
 using NativoChallenge.Domain.Exceptions;
 

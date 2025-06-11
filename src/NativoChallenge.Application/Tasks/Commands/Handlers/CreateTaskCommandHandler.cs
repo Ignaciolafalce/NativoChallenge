@@ -20,7 +20,7 @@ public class CreateTaskCommandHandler : IRequestHandler<CreateTaskCommand, Creat
         var (title, description, expirationDate, priorityText) = command;
         var priority = Enum.Parse<TaskPriority>(priorityText, ignoreCase: true);
 
-        Entities.Task task = new(title, description, expirationDate, priority);
+        Entities.Task.Task task = new(title, description, expirationDate, priority);
 
         task = await _taskRepository.CreateAsync(task, cancellationToken);
 

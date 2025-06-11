@@ -1,8 +1,9 @@
-﻿using NativoChallenge.Domain.Enums;
+﻿using NativoChallenge.Domain.Entities.Task.Events;
+using NativoChallenge.Domain.Enums;
 using NativoChallenge.Domain.Exceptions;
 
-namespace NativoChallenge.Domain.Entities;
-public class Task
+namespace NativoChallenge.Domain.Entities.Task;
+public class Task : IHasDomainEvent
 {
     public Guid Id { get; private set; }
     public string Title { get; private set; }
@@ -14,9 +15,10 @@ public class Task
     // check if the task is expired 
     public bool IsExpired => ExpirationDate < DateTime.UtcNow;
 
+    public List<DomainEvent> DomainEvents { get; set; } = new List<DomainEvent>();
 
     public Task(string title, string? description, DateTime expirationDate, TaskPriority priority)
-    {
+    { 
         if (string.IsNullOrWhiteSpace(title))
         {
             throw new InvalidTaskException("The title must not be empty.");
@@ -26,6 +28,11 @@ public class Task
         Description = description;
         ExpirationDate = expirationDate;
         Priority = priority;
+
+        // We can move all the logic to a factory method to create a task... that is better idea i think
+        // like static Task Create(string title, string? description, DateTime expirationDate, TaskPriority priority)
+        // Let's keep it simple for now because we have some reference to this constructor and no time :( 
+        DomainEvents.Add(new TaskCreatedEvent(this));
     }
 
     // Internal Ctor for testing purposes

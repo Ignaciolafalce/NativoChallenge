@@ -1,14 +1,15 @@
-﻿using NativoChallenge.Infrastructure.Data.EF.Configurations;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Entities = NativoChallenge.Domain.Entities;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using NativoChallenge.Domain.Entities;
 using NativoChallenge.Domain.Entities.Identity;
+using NativoChallenge.Infrastructure.Data.EF.Configurations;
+using Entities = NativoChallenge.Domain.Entities;
 
 namespace NativoChallenge.Infrastructure.Data.EF;
 
 public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>
 {
-    public DbSet<Entities.Task> Tasks { get; set; }
+    public DbSet<Entities.Task.Task> Tasks { get; set; }
 
     public AppDbContext(DbContextOptions<AppDbContext> dbContextOptions) : base(dbContextOptions)
     {

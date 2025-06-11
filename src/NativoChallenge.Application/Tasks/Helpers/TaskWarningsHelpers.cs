@@ -7,6 +7,6 @@ public static class TaskWarningsHelpers
 {
     public static string? GetHighPriorityPendingWarningAsync(int highPriorityPendingCount)
     {
-        return Entities.Task.HighPriorityPendingLimitExceeded(highPriorityPendingCount, out var warning) ? warning : null;
+        return Entities.Task.Task.HighPriorityPendingLimitExceeded(highPriorityPendingCount, out var warning) ? warning : null;
     }
 }
