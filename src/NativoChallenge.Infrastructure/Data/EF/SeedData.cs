@@ -1,4 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using NativoChallenge.Domain.Entities.Identity;
 using NativoChallenge.Domain.Enums;
 using Entities = NativoChallenge.Domain.Entities;
 
@@ -6,7 +9,7 @@ namespace NativoChallenge.Infrastructure.Data.EF;
 
 public static class SeedData
 {
-    public static async Task SeedAsync(AppDbContext dbContext)
+    public static async Task SeedTasksAsync(AppDbContext dbContext)
     {
         if (await dbContext.Tasks.AnyAsync())
         {
@@ -23,4 +26,29 @@ public static class SeedData
         dbContext.Tasks.AddRange(sampleTasks);
         await dbContext.SaveChangesAsync();
     }
+
+    public static async Task SeedAdminUsersAsync(
+        UserManager<ApplicationUser> userManager,
+        RoleManager<ApplicationRole> roleManager)
+    {
+        var role = "Admin";
+
+        if (!await roleManager.RoleExistsAsync(role))
+        {
+            await roleManager.CreateAsync(new ApplicationRole(role));
+        }
+
+        var defaultUser = new ApplicationUser
+        {
+            UserName = "admin",
+            Email = "admin@nativo.com"
+        };
+
+        if (await userManager.FindByNameAsync(defaultUser.UserName) is null)
+        {
+            await userManager.CreateAsync(defaultUser, "Admin123!"); // contraseñas seguras por defecto
+            await userManager.AddToRoleAsync(defaultUser, role);
+        }
+    }
+
 }
