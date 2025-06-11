@@ -1,10 +1,18 @@
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using NativoChallenge.Application.Auth.DTOs;
+using NativoChallenge.Domain.Entities.Identity;
 using NativoChallenge.Domain.Enums;
 using NativoChallenge.Infrastructure.Data.EF;
 using NativoChallenge.WebAPI;
+using NativoChallenge.WebAPI.Common;
+using NativoChallenge.WebAPI.Common.Auth;
+using Newtonsoft.Json.Linq;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using Entities = NativoChallenge.Domain.Entities;
 
 namespace NativoChallenge.IntegrationTests.Tasks;
@@ -12,6 +20,7 @@ namespace NativoChallenge.IntegrationTests.Tasks;
 public class TaskEndpointsSetupFixture : WebApplicationFactory<Program>
 {
     private readonly string _databaseName = Guid.NewGuid().ToString();
+
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
@@ -35,10 +44,65 @@ public class TaskEndpointsSetupFixture : WebApplicationFactory<Program>
             using var scope = sp.CreateScope();
             var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
             db.Database.EnsureCreated();
+
+            SeedUsersAsync(sp).GetAwaiter().GetResult();
         });
     }
 
-    public async Task<List<Entities.Task>> DefaultSeedAsync()
+    //protected override void ConfigureClient(HttpClient client)
+    //{
+    //    base.ConfigureClient(client);
+    //    //var tmpClient = new HttpClient();
+    //    //tmpClient.BaseAddress = client.BaseAddress; // maybe it can be refactor
+    //    var loginRequest = new
+    //    {
+    //        userName = "admin",
+    //        password = "Admin123!"
+    //    };
+
+    //    var response = client.PostAsJsonAsync("/auth/token", loginRequest).GetAwaiter().GetResult();
+    //    var result = response.Content.ReadFromJsonAsync<ApiResponse<TokenResult>>().GetAwaiter().GetResult();
+
+
+    //    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", result!.Data!.AccessToken);
+    //}
+
+    public async Task SeedUsersAsync(IServiceProvider services)
+    {
+        var scope = services.CreateScope();
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
+
+        var adminRole = new ApplicationRole { Name = AppRoles.Admin };
+        if (!await roleManager.RoleExistsAsync(adminRole.Name))
+        {
+            await roleManager.CreateAsync(adminRole);
+        }
+
+        var adminUser = new ApplicationUser
+        {
+            UserName = "admin",
+            Email = "admin@nativo.com"
+        };
+
+        if (await userManager.FindByNameAsync(adminUser.UserName) is not null)
+        {
+            await userManager.CreateAsync(adminUser, "Admin123!");
+            await userManager.AddToRoleAsync(adminUser, AppRoles.Admin);
+        }
+    }
+
+    public async Task AuthenticateAdminAsync(HttpClient client)
+    {
+        var loginRequest = new { userName = "admin", password = "Admin123!" };
+
+        var response = await client.PostAsJsonAsync("/auth/token", loginRequest);
+        var result = await response.Content.ReadFromJsonAsync<ApiResponse<TokenResult>>();
+       
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", result!.Data!.AccessToken);
+    }
+
+    public async Task<List<Entities.Task>> DefaultSeedTasksAsync()
     {
         using var scope = Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();

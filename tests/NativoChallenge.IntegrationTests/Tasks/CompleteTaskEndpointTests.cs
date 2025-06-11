@@ -16,6 +16,7 @@ public class CompleteTaskEndpointTests : IClassFixture<TaskEndpointsSetupFixture
     {
         _fixture = fixture;
         _client = fixture.CreateClient();
+        _fixture.AuthenticateAdminAsync(_client).Wait();
     }
 
     [Fact]

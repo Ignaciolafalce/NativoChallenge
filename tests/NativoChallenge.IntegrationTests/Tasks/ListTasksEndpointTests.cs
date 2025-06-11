@@ -13,13 +13,14 @@ public class ListTasksEndpointTests : IClassFixture<TaskEndpointsSetupFixture>
     {
         _fixture = fixture;
         _client = fixture.CreateClient();
+        _fixture.AuthenticateAdminAsync(_client).Wait();
     }
 
     [Fact]
     public async Task GetTasks_DefaultOrder_ReturnsOkAndListTasksResult()
     {
         // Arrange
-        var tasksInDb = await _fixture.DefaultSeedAsync();
+        var tasksInDb = await _fixture.DefaultSeedTasksAsync();
         tasksInDb = tasksInDb.OrderBy(t => t.Id).ToList();
 
         // Act

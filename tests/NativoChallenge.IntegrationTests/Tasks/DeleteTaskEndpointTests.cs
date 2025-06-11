@@ -15,6 +15,7 @@ public class DeleteTaskEndpointTests : IClassFixture<TaskEndpointsSetupFixture>
     {
         _fixture = fixture;
         _client = fixture.CreateClient();
+        _fixture.AuthenticateAdminAsync(_client).Wait();
     }
 
     [Fact]
