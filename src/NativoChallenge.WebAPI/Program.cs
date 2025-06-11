@@ -1,8 +1,11 @@
 
+using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi.Models;
-using NativoChallenge.Infrastructure.Data.Configuration;
 using NativoChallenge.Application.Configuration;
+using NativoChallenge.Domain.Entities.Identity;
+using NativoChallenge.Infrastructure.Data.Configuration;
 using NativoChallenge.Infrastructure.Data.EF;
+using NativoChallenge.WebAPI.Common.Auth;
 using NativoChallenge.WebAPI.Endpoints;
 using NativoChallenge.WebAPI.Extensions;
 
@@ -19,6 +22,8 @@ public class Program
         builder.Services.AddApplication(builder.Configuration);
         builder.Services.AddInfrastructure(builder.Configuration);
 
+        builder.Services.AddAppAuthorization();
+
         // OpenApi and Swagger services
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen(options =>
@@ -34,9 +39,29 @@ public class Program
                     Email = "nacho_lafalce@hotmail.com"
                 }
             });
+
+            options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            {
+                In = ParameterLocation.Header,
+                Description = "Please insert JWT with Bearer into field",
+                Name = "Authorization",
+                Type = SecuritySchemeType.ApiKey
+            });
+
+            options.AddSecurityRequirement(new OpenApiSecurityRequirement {
+            {
+                new OpenApiSecurityScheme
+                {
+                   Reference = new OpenApiReference{ Type = ReferenceType.SecurityScheme, Id = "Bearer"}
+                },
+                new string[] { }
+            }
+          });
+
         });
 
         #endregion 
+
 
         var app = builder.Build();
 
@@ -69,6 +94,7 @@ public class Program
 
         //app.UseAuthorization();  Not really necessary, but we can improve auth and auth later...
 
+        app.MapAuthEndpoints();
         app.MapTaskEndpoints();
 
         app.Run();
@@ -83,7 +109,12 @@ public class Program
         using (var scope = app.Services.CreateScope())
         {
             var appDbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-            await SeedData.SeedAsync(appDbContext);
+            await SeedData.SeedTasksAsync(appDbContext);
+
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
+
+            await SeedData.SeedAdminUsersAsync(userManager, roleManager);
         }
     }
     #endregion

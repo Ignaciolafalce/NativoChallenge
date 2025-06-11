@@ -1,5 +1,7 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Diagnostics;
+using NativoChallenge.Application.Common.Exceptions;
+using NativoChallenge.Domain.Exceptions;
 using NativoChallenge.WebAPI.Common;
 
 namespace NativoChallenge.WebAPI.Extensions;
@@ -8,6 +10,7 @@ public static class ExceptionMiddlewareExtensions
 {
     public static IApplicationBuilder UseCustomExceptionHandler(this IApplicationBuilder app)
     {
+        // We can refactor here...
         app.UseExceptionHandler(handler =>
         {
             handler.Run(async context =>
@@ -29,6 +32,28 @@ public static class ExceptionMiddlewareExtensions
                     await context.Response.WriteAsJsonAsync(response);
                     return;
                 }
+
+                if (exception is BusinessRuleException businessRuleEx)
+                {
+                    context.Response.StatusCode = StatusCodes.Status422UnprocessableEntity;
+                    await context.Response.WriteAsJsonAsync(ApiResponse<object>.Failure([businessRuleEx.Message]));
+                    return;
+                }
+
+                if (exception is ForbiddenAccessException forbiddenEx)
+                {
+                    context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                    await context.Response.WriteAsJsonAsync(ApiResponse<object>.Failure([forbiddenEx.Message]));
+                    return;
+                }
+
+                if (exception is NotFoundException notFoundEx)
+                {
+                    context.Response.StatusCode = StatusCodes.Status404NotFound;
+                    await context.Response.WriteAsJsonAsync(ApiResponse<object>.Failure([notFoundEx.Message]));
+                    return;
+                }
+
 
                 context.Response.StatusCode = StatusCodes.Status500InternalServerError;
                 await context.Response.WriteAsJsonAsync(ApiResponse<object>.Failure(["Unexpected error occurred."]));

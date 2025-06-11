@@ -4,35 +4,52 @@
 //docker
 //@NativoChallenge.WebAPI_HostAddress = https://localhost:49153
 
-### Task Endpoints
-###Example Task ID, replace with actual ID when needed
-@taskId = afe84719-74b3-4869-95a6-dc3318be9566
+## Auth - JWT Bearer Token
+// Replace with actual token when needed
+@token = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9zaWQiOiI2YmQxMDExNi1mMTNjLTQ4ODUtYjhiYy1lYmZkNGRiNzI5ZjciLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImV4cCI6MTc0OTYyNTU4MywiaXNzIjoiTmF0aXZvQ2hhbGxlbmdlLm5ldCIsImF1ZCI6ImxvY2FsaG9zdCJ9.XqQ2_zKx00X09fcFZX0bnbW1nPTdD84VpeIm_Pdor3k
+POST {{NativoChallenge.WebAPI_HostAddress}}/auth/token
+Content-Type: application/json
+
+{
+  "userName": "admin",
+  "password": "Admin123!"
+}
+
+
+### Task Endpoints --
 
 ### Get All Tasks
 GET {{NativoChallenge.WebAPI_HostAddress}}/tasks
+Authorization: {{token}}
 
 ### Get Task with Pending state with default order
 GET {{NativoChallenge.WebAPI_HostAddress}}/tasks?State=Pending
+Authorization: {{token}}
 
 ### Get All Task order by Priority
 GET {{NativoChallenge.WebAPI_HostAddress}}/tasks?OrderBy=Priority
+Authorization: {{token}}
 
 ### Get Task with Pending state by Priority
 GET {{NativoChallenge.WebAPI_HostAddress}}/tasks?State=Pending&OrderBy=Priority
+Authorization: {{token}}
 
 ### Create New Task
 POST {{NativoChallenge.WebAPI_HostAddress}}/tasks
+Authorization: {{token}}
 Content-Type: application/json
 
 {
   "title": "Terminar desafío",
   "description": "Completar el challenge técnico",
-  "expirationDate": "2025-06-10T00:00:00Z",
+  "expirationDate": "2027-06-10T00:00:00Z",
   "priority": "High"
 }
 
 ### Complete Task
 PUT {{NativoChallenge.WebAPI_HostAddress}}/tasks/{{taskId}}/complete
+Authorization: {{token}}
 
 ### Delete Task
 DELETE {{NativoChallenge.WebAPI_HostAddress}}/tasks/{{taskId}}
+Authorization: {{token}}
