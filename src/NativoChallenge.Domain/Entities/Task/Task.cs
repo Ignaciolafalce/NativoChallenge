@@ -1,4 +1,5 @@
-﻿using NativoChallenge.Domain.Entities.Task.Events;
+﻿using Microsoft.Extensions.Logging;
+using NativoChallenge.Domain.Entities.Task.Events;
 using NativoChallenge.Domain.Enums;
 using NativoChallenge.Domain.Exceptions;
 
@@ -33,6 +34,9 @@ public class Task : IHasDomainEvent
         // like static Task Create(string title, string? description, DateTime expirationDate, TaskPriority priority)
         // Let's keep it simple for now because we have some reference to this constructor and no time :( 
         DomainEvents.Add(new TaskCreatedEvent(this));
+        //logger
+
+        //Log("New task instance created with ID: {@this}", this);
     }
 
     // Internal Ctor for testing purposes

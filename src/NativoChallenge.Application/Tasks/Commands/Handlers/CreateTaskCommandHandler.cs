@@ -4,19 +4,24 @@ using MediatR;
 using Entities = NativoChallenge.Domain.Entities;
 using NativoChallenge.Application.Tasks.DTOs;
 using NativoChallenge.Application.Tasks.Helpers;
+using Microsoft.Extensions.Logging;
 
 namespace NativoChallenge.Application.Tasks.Commands.Handlers;
 
 public class CreateTaskCommandHandler : IRequestHandler<CreateTaskCommand, CreateTaskResult>
 {
     private readonly ITaskRepository _taskRepository;
-    public CreateTaskCommandHandler(ITaskRepository taskRepository)
+    private readonly ILogger<CreateTaskCommandHandler> _logger;
+
+    public CreateTaskCommandHandler(ITaskRepository taskRepository, ILogger<CreateTaskCommandHandler> logger)
     {
         _taskRepository = taskRepository;
+        _logger = logger;
     }
 
     public async Task<CreateTaskResult> Handle(CreateTaskCommand command, CancellationToken cancellationToken)
     {
+        _logger.LogInformation("Executing CreateTaskCommandHandler for: {@command}", command);
         var (title, description, expirationDate, priorityText) = command;
         var priority = Enum.Parse<TaskPriority>(priorityText, ignoreCase: true);
 

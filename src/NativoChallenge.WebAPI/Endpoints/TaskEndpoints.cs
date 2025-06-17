@@ -5,6 +5,7 @@ using NativoChallenge.Application.Tasks.DTOs;
 using NativoChallenge.Application.Tasks.Queries;
 using NativoChallenge.WebAPI.Common;
 using NativoChallenge.WebAPI.Common.Auth;
+using Serilog;
 
 namespace NativoChallenge.WebAPI.Endpoints;
 
@@ -22,8 +23,11 @@ public static class TaskEndpoints
         });
 
         // POST /tasks
-        group.MapPost("/", async (ISender sender, [FromBody] CreateTaskCommand command) =>
+        group.MapPost("/", async (ISender sender, [FromBody] CreateTaskCommand command,
+                                  [FromServices] ILogger<CreateTaskCommand> logger) =>
         {
+            logger.LogInformation("POST - Endpoint receiver to create a new Task: {@command}", command);
+
             var result = await sender.Send(command);
             return Results.Ok(ApiResponse<CreateTaskResult>.Success(result));
         });

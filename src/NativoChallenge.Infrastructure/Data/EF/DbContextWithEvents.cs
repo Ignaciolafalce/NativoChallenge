@@ -23,6 +23,8 @@ public class DbContextWithEvents
     {
         var result = await _context.SaveChangesAsync(cancellationToken);
 
+        _logger.LogInformation("Changes saved to the database. Number of affected rows: {AffectedRows}", result);
+
         var domainEvents = _context.ChangeTracker
                                     .Entries<IHasDomainEvent>()
                                     .SelectMany(e => e.Entity.DomainEvents)

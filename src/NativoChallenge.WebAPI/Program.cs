@@ -8,6 +8,8 @@ using NativoChallenge.Infrastructure.Data.EF;
 using NativoChallenge.WebAPI.Common.Auth;
 using NativoChallenge.WebAPI.Endpoints;
 using NativoChallenge.WebAPI.Extensions;
+using OpenTelemetry.Trace;
+using Serilog;
 
 namespace NativoChallenge.WebAPI;
 public class Program
@@ -16,7 +18,11 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
+        builder.AddSerilogConfiguration();
+
         #region Services 
+
+        Log.Information("Configuring Services");
 
         // Application and Infrastructure services
         builder.Services.AddApplication(builder.Configuration);
@@ -59,6 +65,16 @@ public class Program
           });
 
         });
+       
+        // Openlemetry services and configuration for tracing
+        builder.Services.AddOpenTelemetry()
+                        .WithTracing(tracing =>
+                        {
+                            tracing.AddAspNetCoreInstrumentation()
+                                   .AddHttpClientInstrumentation()
+                                   .AddSqlClientInstrumentation()
+                                   .AddConsoleExporter();
+                        });
 
         #endregion 
 
@@ -66,6 +82,7 @@ public class Program
         var app = builder.Build();
 
         // Seed Task data
+        Log.Information("Seeding Task Data");
         SeedTasksData(app);
 
         #region Http Request Pipeline Configuration - Middlewares
@@ -92,12 +109,14 @@ public class Program
         app.MapGet("/", () => Results.Redirect("/swagger"))
            .ExcludeFromDescription();
 
-        //app.UseAuthorization();  Not really necessary, but we can improve auth and auth later...
+        //app.UseAuthorization();  In Application Layer, we have added the authorization policy
 
         app.MapAuthEndpoints();
         app.MapTaskEndpoints();
 
+        Log.Information("Starting App...");
         app.Run();
+
         #endregion
     }
 
